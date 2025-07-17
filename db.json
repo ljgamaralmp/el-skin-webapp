@@ -1,0 +1,115 @@
+{
+  "carousel": [
+    {
+      "id": 1,
+      "subtitle": "confira nossa linha",
+      "title": "corporal",
+      "description": "com benefícios além da hidratação",
+      "backgroundImage": "/assets/img1.png"
+    },
+    {
+      "id": 2,
+      "subtitle": "toda linha",
+      "title": "anti-age",
+      "description": "use o cupom ANTIAGE15",
+      "backgroundImage": "/assets/img2.png"
+    },
+    {
+      "id": 3,
+      "subtitle": "",
+      "title": "kits incríveis",
+      "description": "até 50% OFF",
+      "backgroundImage": "/assets/img3.png"
+    }
+  ],
+  "products": [
+    {
+      "id": 1,
+      "name": "Creme Hidratante Facial",
+      "description": "Creme nutritivo para hidratação profunda da pele do rosto, com extrato de aloe vera.",
+      "price": 45.99,
+      "image": "/assets/prod1.png",
+      "tags": [
+        "face",
+        "hydration"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Protetor Solar SPF 50",
+      "description": "Protetor solar de alta proteção contra raios UVA/UVB, resistente à água.",
+      "price": 89.90,
+      "image": "/assets/prod2.png",
+      "tags": [
+        "protection",
+        "sun"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Máscara de Argila Verde",
+      "description": "Máscara purificante para controle de oleosidade e limpeza dos poros.",
+      "price": 32.50,
+      "image": "/assets/prod3.png",
+      "tags": [
+        "face",
+        "cleansing"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "Sérum Antirrugas",
+      "description": "Sérum com ácido hialurônico para redução de linhas finas e rugas.",
+      "price": 78.20,
+      "image": "/assets/prod4.png",
+      "tags": [
+        "face",
+        "anti-aging"
+      ]
+    },
+    {
+      "id": 5,
+      "name": "Bálsamo Labial Hidratante",
+      "description": "Bálsamo com manteiga de karité para lábios ressecados e proteção diária.",
+      "price": 12.75,
+      "image": "/assets/prod5.png",
+      "tags": [
+        "lips",
+        "hydration"
+      ]
+    },
+    {
+      "id": 6,
+      "name": "Esfoliante Facial",
+      "description": "Esfoliante suave com microesferas naturais para renovação da pele.",
+      "price": 25.80,
+      "image": "/assets/prod6.png",
+      "tags": [
+        "face",
+        "exfoliation"
+      ]
+    },
+    {
+      "id": 7,
+      "name": "Tônico Revitalizante",
+      "description": "Tônico refrescante com extrato de chá verde para equilibrar o pH da pele.",
+      "price": 38.40,
+      "image": "/assets/prod7.png",
+      "tags": [
+        "face",
+        "toning"
+      ]
+    },
+    {
+      "id": 8,
+      "name": "Óleo Corporal Hidratante",
+      "description": "Óleo leve com fragrância de lavanda para hidratação intensiva da pele.",
+      "price": 65.30,
+      "image": "/assets/prod8.png",
+      "tags": [
+        "body",
+        "hydration"
+      ]
+    }
+  ]
+}
