@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
 const FooterColumn = styled.div`
@@ -39,27 +40,28 @@ const opcoesConteudo = [['quem somos', 'time AL SKIN', 'carreiras'],
                         ['Minha pele','ingredientes']]
 
 export default function OpcoesFooter() {
-    return (
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          width: "100%",
-          marginTop: "20px",
-        }}
-      >
-        {footerOpcoes.map((titulo, index) => (
-          <FooterColumn key={index}>
-            <ColumnTitle>{titulo}</ColumnTitle>
-            <LinkList>
-              {opcoesConteudo[index].map((link, linkIndex) => (
-                <LinkItem key={linkIndex}>{link}</LinkItem>
-              ))}
-            </LinkList>
-          </FooterColumn>
-        ))}
-      </div>
-    );
-
+  return (
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        width: "100%",
+        marginTop: "20px",
+      }}
+    >
+      {footerOpcoes.map((titulo, index) => (
+        <FooterColumn key={index}>
+          <ColumnTitle>{titulo}</ColumnTitle>
+          <LinkList>
+            {opcoesConteudo[index].map((link, linkIndex) => (
+              <LinkItem key={linkIndex}>
+                {<Link to={`/sobre`}>{link}</Link>}
+              </LinkItem>
+            ))}
+          </LinkList>
+        </FooterColumn>
+      ))}
+    </div>
+  );
 }
 
