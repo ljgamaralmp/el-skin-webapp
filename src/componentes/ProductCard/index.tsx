@@ -48,10 +48,15 @@ const Button = styled.button`
 `
 
 interface Produto {
-  imagem: string;
-  nome: string;
-  descricao: string;
-  preco: string | number;
+  id: number;
+  image: string;
+  name: string;
+  description: string;
+  price: string | number;
+  tags: Array<{
+    label: string;
+    type: 'protection' | 'face';
+  }>;
 }
 
 interface ProductCardProps {
@@ -62,11 +67,11 @@ function ProductCard({ produto }: ProductCardProps) {
 
   return (
     <Card>
-      <Image src={produto.imagem} alt={produto.nome} />
+      <Image src={produto.image} alt={produto.name} />
       <Info>
-        <Title>{<p>{produto.nome}</p>}</Title>
-        <Description><p>{produto.descricao}</p></Description>
-        <Price>{<p>{produto.preco}</p>} <Button>comprar</Button></Price>
+        <Title>{<p>{produto.name}</p>}</Title>
+        <Description><p>{produto.description}</p></Description>
+        <Price>{<p>{produto.price}</p>} <Button>comprar</Button></Price>
       </Info>
     </Card>
   )
