@@ -7,6 +7,8 @@ interface SearchContextType {
 
 const SearchContext = createContext<SearchContextType | undefined>(undefined);
 
+//Provedor de Contexto de Busca
+// Ele deve envolver a parte da aplicação que precisa acessar o termo de busca
 export function SearchProvider({ children }: { children: ReactNode }) {
   const [termoDeBusca, setTermoDeBusca] = useState('');
 
@@ -16,7 +18,8 @@ export function SearchProvider({ children }: { children: ReactNode }) {
     </SearchContext.Provider>
   );
 }
-
+// Hook para usar o contexto de busca
+// Ele deve ser usado dentro de um SearchProvider
 export function useSearch() {
   const context = useContext(SearchContext);
   if (context === undefined) {
