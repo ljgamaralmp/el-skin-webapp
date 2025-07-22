@@ -1,24 +1,20 @@
+import Layout from './componentes/Layout'
 import Home from './pages/Home';
 import NotFound from './pages/NotFound';
 import Sobre from './pages/Sobre';
-import Header from './componentes/Header';
-import Footer from './componentes/Footer';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 export default function AppRouter() {
   return (
     <main className='container'>
-      <Router>
-        
-        <Header />     
+      <Router>    
         <Routes>
-          <Route path='/' element={<Home />} />
-          <Route path='sobre' element={<Sobre />} />
-          <Route path='*' element={<NotFound />} />
+          <Route path='/' element={<Layout />} >
+            <Route index element={<Home />} />
+            <Route path='sobre' element={<Sobre />} />
+            <Route path='*' element={<NotFound />} />
+          </Route>
         </Routes>
-        <Footer />
-    
-
       </Router>
     </main>
   );
