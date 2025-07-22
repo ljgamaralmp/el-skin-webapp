@@ -3,19 +3,9 @@ import ProductCard from '../ProductCard';
 import { useEffect, useState } from 'react';
 import { useSearch } from '../../contexts/SearchContext'; 
 import { productService } from '../../service/productService';
+import { useCart } from '../../contexts/CartContext';
+import { Produto } from '../../types/types';
 
-
-interface Produto {
-  id: number;
-  image: string;
-  name: string;
-  description: string;
-  price: string | number;
-  tags: Array<{
-    label: string;
-    type: 'protection' | 'face';
-  }>;
-}
 
 const ShowcaseContainer = styled.div`
   display: flex;
@@ -31,6 +21,7 @@ function ProductShowcase() {
   const [error, setError] = useState<string | null>(null);
 
   const { termoDeBusca } = useSearch();
+  const { addToCart } = useCart();
 
   useEffect(() => {
     const fetchItems = async () => {
@@ -67,7 +58,7 @@ function ProductShowcase() {
     <ShowcaseContainer>
       {produtosFiltrados.length > 0 ? (
         produtosFiltrados.map((produto) => (
-          <ProductCard key={produto.id} produto={produto} />
+          <ProductCard key={produto.id} produto={produto} onAddToCart={addToCart}/>
         ))
       ) : (
         <p>Nenhum produto encontrado para "{termoDeBusca}".</p>
