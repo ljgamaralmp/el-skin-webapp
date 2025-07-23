@@ -27,37 +27,54 @@ type ActionType =
   | { type: typeof UPDATE_quantity; payload: { productId: number; quantity: number } };
 
   export const carrinhoReducer = (state: CartItem[], action: ActionType): CartItem[] => {
+
+  console.log("---------------------------------");
+  console.log("AÇÃO DESPACHADA:", action);
+  console.log("ESTADO ANTERIOR:", state);
+
   switch (action.type) {
     case ADD_PRODUTO:
       const novoProduto = action.payload;
       const produtoIndex = state.findIndex((item) => item.id === novoProduto.id);
-      
+      let novoEstado;
       if (produtoIndex === -1) {
         // Adiciona o novo produto com quantity 1 caso ele ainda não exista no carrinho
-        return [...state, { ...novoProduto, quantity: 1 }];
+        novoEstado = [...state, { ...novoProduto, quantity: 1 }];
       } else {
         // Atualiza a quantity do produto caso ele já exista no carrinho
-        return state.map((item, index) =>
+        novoEstado = state.map((item, index) =>
           index === produtoIndex
             ? { ...item, quantity: item.quantity + 1 }
             : item
         );
       }
 
-    case REMOVE_PRODUTO:
-      const productId = action.payload;
-      return state.filter((item) => item.id !== productId);
+      console.log("NOVO ESTADO:", novoEstado); // Log do estado após a mudança
+      return novoEstado;
 
-    case UPDATE_quantity:
+    case REMOVE_PRODUTO: {
+      let novoEstado;
+      const productId = action.payload;
+      novoEstado = state.filter((item) => item.id !== productId);
+
+      console.log("NOVO ESTADO:", novoEstado); // Log do estado após a mudança
+      return novoEstado;
+    }
+
+    case UPDATE_quantity:  {
+      let novoEstado;
       const { productId: id, quantity } = action.payload;
       // Impede que a quantity seja menor que 1, removendo o item em vez disso.
       if (quantity <= 0) {
-        return state.filter(item => item.id !== id);
+        novoEstado = state.filter(item => item.id !== id);
       }
-      return state.map((item) =>
+      novoEstado = state.map((item) =>
         item.id === id ? { ...item, quantity } : item
       );
-
+      console.log("NOVO ESTADO:", novoEstado); // Log do estado após a mudança
+      return novoEstado;
+    }
+    
     default:
       return state;
   }
