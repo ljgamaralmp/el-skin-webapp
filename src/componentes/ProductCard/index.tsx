@@ -53,17 +53,18 @@ const Button = styled.button`
 interface ProductCardProps {
   produto: Produto;
   onAddToCart: (produto: Produto) => void;
+  onProductClick: (productId: string) => void;
 }
 
-function ProductCard({ produto, onAddToCart }: ProductCardProps) {
+function ProductCard({ produto, onAddToCart, onProductClick }: ProductCardProps) {
 
   return (
-    <Card>
+    <Card data-testid="product-card" onClick={() => onProductClick(String(produto.id))}>
       <Image src={produto.image} alt={produto.name} />
       <Info>
         <Title>{<p>{produto.name}</p>}</Title>
         <Description><p>{produto.description}</p></Description>
-        <Price>{<p>{produto.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</p>} <Button onClick={() => onAddToCart(produto)}>Adicionar à sacola</Button></Price>
+        <Price>{<p>{produto.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</p>} <Button data-testid="add-to-cart-button" onClick={() => onAddToCart(produto)}>Adicionar à sacola</Button></Price>
       </Info>
     </Card>
   )

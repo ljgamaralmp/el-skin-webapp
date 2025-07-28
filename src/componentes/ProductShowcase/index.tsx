@@ -54,11 +54,15 @@ function ProductShowcase() {
   if (loading) return <p style={{ padding: '20px' }}>Carregando produtos...</p>;
   if (error) return <p style={{ padding: '20px' }}>Erro ao carregar produtos: {error}</p>;
 
+  function handleProductClick(productId: string) {
+    console.log(`Produto clicado: ${productId}`);
+  }
+
   return (
     <ShowcaseContainer>
       {produtosFiltrados.length > 0 ? (
         produtosFiltrados.map((produto) => (
-          <ProductCard key={produto.id} produto={produto} onAddToCart={addToCart}/>
+          <ProductCard key={produto.id} produto={produto} onAddToCart={addToCart} onProductClick={handleProductClick} />
         ))
       ) : (
         <p>Nenhum produto encontrado para "{termoDeBusca}".</p>
