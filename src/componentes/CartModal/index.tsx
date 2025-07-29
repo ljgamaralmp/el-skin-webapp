@@ -112,12 +112,12 @@ export function CartModal() {
   if (!isCartOpen) return null;
 
   return (
-    <ModalOverlay onClick={closeCart}>
+    <ModalOverlay onClick={closeCart} data-testid="modal-overlay">
       {/* impede que um clique dentro do conteúdo do seu modal se propague para o fundo escuro (o overlay) e feche o modal acidentalmente. */}
       <ModalContent onClick={(e) => e.stopPropagation()}>
         <ModalHeader>
           <h2>Seu Carrinho</h2>
-          <CloseButton onClick={closeCart}><FontAwesomeIcon icon={faTimes} /></CloseButton>
+          <CloseButton onClick={closeCart} data-testid="close-button"><FontAwesomeIcon icon={faTimes} /></CloseButton>
         </ModalHeader>
 
         <CartItemsList>
@@ -130,10 +130,10 @@ export function CartModal() {
                 <h4>{item.name}</h4> 
                 <p>Preço: {item.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</p> 
                 <ItemControls>
-                  <QuantityButton onClick={() => updateQuantity(item.id, item.quantity - 1)}><FontAwesomeIcon icon={faMinus} /></QuantityButton>
+                  <QuantityButton onClick={() => updateQuantity(item.id, item.quantity - 1)} data-testid="minus-button"><FontAwesomeIcon icon={faMinus} /></QuantityButton>
                   <QuantityDisplay>{item.quantity}</QuantityDisplay>
-                  <QuantityButton onClick={() => updateQuantity(item.id, item.quantity + 1)}><FontAwesomeIcon icon={faPlus} /></QuantityButton>
-                  <RemoveButton onClick={() => removeFromCart(item.id)}><FontAwesomeIcon icon={faTrash} /></RemoveButton>
+                  <QuantityButton onClick={() => updateQuantity(item.id, item.quantity + 1)} data-testid="plus-button"><FontAwesomeIcon icon={faPlus} /></QuantityButton>
+                  <RemoveButton onClick={() => removeFromCart(item.id)} data-testid="remove-button"><FontAwesomeIcon icon={faTrash} /></RemoveButton>
                 </ItemControls>
               </ItemInfo>
             </CartItem>

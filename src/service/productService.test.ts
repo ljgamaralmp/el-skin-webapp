@@ -4,6 +4,7 @@ import { productService, Produto } from './productService';
 import MockAdapter from 'axios-mock-adapter';
 import { API_CONFIG } from '../config/APIConfig';
 
+// Organizar 
 // Cria um mock para a instância do axios
 const mockApi = new MockAdapter(api);
 

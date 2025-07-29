@@ -1,7 +1,7 @@
 import api from './api';
 import { API_CONFIG } from '../config/APIConfig';
 
-interface CarouselProps {
+export interface CarouselProps {
     id:number;
     subtitle:string;
     title: string;
