@@ -1,7 +1,7 @@
 import Pesquisa from '../../Pesquisa'
 import sacola from '../../../assets/sacola.png'
 import styled from 'styled-components'
-import { useCart } from '../../../contexts/CartContext';
+import { useCartContext } from '../../../contexts/CartContext';
 
 const TopoContainer = styled.div`
     display: flex;
@@ -35,7 +35,7 @@ const CartCount = styled.span`
 `;
 
 export default function Topo() {
-  const { openCart, cartItems } = useCart();
+  const { openCart, cartItems } = useCartContext();
 
   const totalItems = cartItems.reduce((total, item) => total + item.quantity, 0);
 

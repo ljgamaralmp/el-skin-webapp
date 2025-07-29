@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { useCart } from '../../contexts/CartContext';
+import { useCartContext } from '../../contexts/CartContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMinus, faTimes, faTrash, faPlus } from '@fortawesome/free-solid-svg-icons';
 
@@ -107,7 +107,7 @@ const Total = styled.h3`
 
 
 export function CartModal() {
-  const { isCartOpen, closeCart, cartItems, removeFromCart, updateQuantity, cartTotal } = useCart();
+  const { isCartOpen, closeCart, cartItems, removeFromCart, updateQuantity, cartTotal } = useCartContext();
 
   if (!isCartOpen) return null;
 

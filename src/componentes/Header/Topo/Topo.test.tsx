@@ -1,7 +1,7 @@
 import '@testing-library/jest-dom';
 import { render, screen, fireEvent } from '@testing-library/react';
 import Topo from './index';
-import { useCart } from '../../../contexts/CartContext';
+import { useCartContext } from '../../../contexts/CartContext';
 
 // Organizar
 jest.mock('../../Pesquisa', () => {
@@ -11,7 +11,7 @@ jest.mock('../../Pesquisa', () => {
 });
 
 jest.mock('../../../contexts/CartContext');
-const useCartMock = useCart as jest.Mock;
+const useCartMock = useCartContext as jest.Mock;
 
 describe('Componente Topo', () => {
   // Limpa os mocks entre os testes

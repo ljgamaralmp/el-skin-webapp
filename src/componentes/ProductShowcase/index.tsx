@@ -3,7 +3,7 @@ import ProductCard from '../ProductCard';
 import { useEffect, useState } from 'react';
 import { useSearch } from '../../contexts/SearchContext'; 
 import { productService } from '../../service/productService';
-import { useCart } from '../../contexts/CartContext';
+import { useCartContext } from '../../contexts/CartContext';
 import { Produto } from '../../types/types';
 
 
@@ -21,7 +21,7 @@ function ProductShowcase() {
   const [error, setError] = useState<string | null>(null);
 
   const { termoDeBusca } = useSearch();
-  const { addToCart } = useCart();
+  const { addToCart } = useCartContext();
 
   useEffect(() => {
     const fetchItems = async () => {

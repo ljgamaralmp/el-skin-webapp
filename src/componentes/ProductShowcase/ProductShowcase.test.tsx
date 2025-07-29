@@ -1,6 +1,7 @@
 import '@testing-library/jest-dom';
 import { act, render, screen } from '@testing-library/react';
 import ProductShowcase from './index';
+import { useCartContext } from '../../contexts/CartContext';
 
 //Organizar
 
@@ -42,7 +43,7 @@ jest.mock('../../contexts/SearchContext', () => ({
 }));
 
 jest.mock('../../contexts/CartContext', () => ({
-  useCart: () => ({
+  useCartContext: () => ({
     addToCart: mockAddItem
   }),
 }));
