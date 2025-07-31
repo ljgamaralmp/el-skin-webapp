@@ -1,5 +1,5 @@
 import { SearchProvider } from './contexts/SearchContext';
-import Home from './pages/Home'; 
+import { CartProvider } from './contexts/CartContext';
 import { createGlobalStyle } from 'styled-components';
 import AppRouter from './routes';
 
@@ -17,7 +17,9 @@ function App() {
     <>
       <GlobalStyle />
       <SearchProvider>
-        <AppRouter />
+      <CartProvider>
+         <AppRouter />
+      </CartProvider>
       </SearchProvider>
       
     </>

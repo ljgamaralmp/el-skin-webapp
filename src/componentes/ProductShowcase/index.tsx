@@ -1,5 +1,11 @@
 import styled from 'styled-components';
 import ProductCard from '../ProductCard';
+import { useEffect, useState } from 'react';
+import { useSearch } from '../../contexts/SearchContext'; 
+import { productService } from '../../service/productService';
+import { useCart } from '../../contexts/CartContext';
+import { Produto } from '../../types/types';
+
 
 const ShowcaseContainer = styled.div`
   display: flex;
@@ -8,24 +14,55 @@ const ShowcaseContainer = styled.div`
   gap: 20px;
 `;
 
-interface Produto {
-  id: number;
-  imagem: string;
-  nome: string;
-  descricao: string;
-  preco: string | number;
-}
+function ProductShowcase() {
+  const [todosOsProdutos, setTodosOsProdutos] = useState<Produto[]>([]); 
+  const [produtosFiltrados, setProdutosFiltrados] = useState<Produto[]>([]); 
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
-interface ProductShowcaseProps {
-  produtos: Produto[];
-}
+  const { termoDeBusca } = useSearch();
+  const { addToCart } = useCart();
 
-function ProductShowcase({ produtos }: Readonly<ProductShowcaseProps>) {
+  useEffect(() => {
+    const fetchItems = async () => {
+      try {
+        const produtos = await productService.getProducts();
+        setTodosOsProdutos(produtos); 
+        setProdutosFiltrados(produtos);
+      } catch (err) {
+        if (err instanceof Error) setError(err.message);
+        else setError("Ocorreu um erro desconhecido.");
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    fetchItems();
+  }, []); 
+
+  useEffect(() => {
+    const termo = termoDeBusca.toLowerCase();
+    
+    const resultadoFiltro = todosOsProdutos.filter(produto =>
+      produto.name.toLowerCase().includes(termo) ||
+      produto.description.toLowerCase().includes(termo)
+    );
+    
+    setProdutosFiltrados(resultadoFiltro);
+  }, [termoDeBusca, todosOsProdutos]); 
+
+  if (loading) return <p style={{ padding: '20px' }}>Carregando produtos...</p>;
+  if (error) return <p style={{ padding: '20px' }}>Erro ao carregar produtos: {error}</p>;
+
   return (
     <ShowcaseContainer>
-      {produtos.map((produto) => (
-        <ProductCard key={produto.id} produto={produto} />
-      ))}
+      {produtosFiltrados.length > 0 ? (
+        produtosFiltrados.map((produto) => (
+          <ProductCard key={produto.id} produto={produto} onAddToCart={addToCart}/>
+        ))
+      ) : (
+        <p>Nenhum produto encontrado para "{termoDeBusca}".</p>
+      )}
     </ShowcaseContainer>
   );
 }

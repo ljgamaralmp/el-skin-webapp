@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { Produto } from '../../types/types'
 
 const Card = styled.div`
   border: 1px  #ddd;
@@ -47,26 +48,22 @@ const Button = styled.button`
   }
 `
 
-interface Produto {
-  imagem: string;
-  nome: string;
-  descricao: string;
-  preco: string | number;
-}
+
 
 interface ProductCardProps {
   produto: Produto;
+  onAddToCart: (produto: Produto) => void;
 }
 
-function ProductCard({ produto }: ProductCardProps) {
+function ProductCard({ produto, onAddToCart }: ProductCardProps) {
 
   return (
     <Card>
-      <Image src={produto.imagem} alt={produto.nome} />
+      <Image src={produto.image} alt={produto.name} />
       <Info>
-        <Title>{<p>{produto.nome}</p>}</Title>
-        <Description><p>{produto.descricao}</p></Description>
-        <Price>{<p>{produto.preco}</p>} <Button>comprar</Button></Price>
+        <Title>{<p>{produto.name}</p>}</Title>
+        <Description><p>{produto.description}</p></Description>
+        <Price>{<p>{produto.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</p>} <Button onClick={() => onAddToCart(produto)}>Adicionar à sacola</Button></Price>
       </Info>
     </Card>
   )

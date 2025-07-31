@@ -1,12 +1,10 @@
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import Img1 from '../../assets/img1.png';
-import Img2 from '../../assets/img2.png';
-import Img3 from '../../assets/img3.png';
-import { faAngleLeft, faAngleRight } from '@fortawesome/free-solid-svg-icons';
-import { useEffect, useState } from 'react';
-import styled, { keyframes } from 'styled-components';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faAngleLeft, faAngleRight } from "@fortawesome/free-solid-svg-icons";
+import { useEffect, useState } from "react";
+import styled, { keyframes } from "styled-components";
+import api from "axios";
+import { carouselService } from "../../service/carouselService";
 
-// Animação
 const fadeInUp = keyframes`
   from {
     opacity: 0;
@@ -18,27 +16,35 @@ const fadeInUp = keyframes`
   }
 `;
 
-// Componentes
 export const CarouselSection = styled.section`
   position: relative;
   min-height: 500px;
   display: flex;
   align-items: center;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.85) 40%, transparent 60%),
-              linear-gradient(45deg, #f8f6f3 0%, #e8e4e0 100%);
+  background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.95) 0%,
+      rgba(255, 255, 255, 0.85) 40%,
+      transparent 60%
+    ),
+    linear-gradient(45deg, #f8f6f3 0%, #e8e4e0 100%);
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
   overflow: hidden;
 
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.1) 0%,
+      transparent 50%
+    );
     pointer-events: none;
   }
 `;
@@ -76,7 +82,7 @@ export const CarouselNavButton = styled.button`
 export const CarouselSubtitle = styled.span`
   display: block;
   font-size: 16px;
-  color: #8B4A8B;
+  color: #8b4a8b;
   margin-bottom: 8px;
   font-weight: 400;
   letter-spacing: 0.5px;
@@ -87,7 +93,7 @@ export const CarouselSubtitle = styled.span`
 export const CarouselTitle = styled.h1`
   font-size: 64px;
   font-weight: 700;
-  color: #8B4A8B;
+  color: #8b4a8b;
   margin: 0 0 16px 0;
   line-height: 1.1;
   text-shadow: 2px 2px 4px rgba(139, 74, 139, 0.1);
@@ -106,7 +112,7 @@ export const CarouselDescription = styled.p`
 `;
 
 export const CarouselCtaButton = styled.button`
-  background: linear-gradient(135deg, #8B4A8B 0%, #A855A8 100%);
+  background: linear-gradient(135deg, #8b4a8b 0%, #a855a8 100%);
   color: white;
   border: none;
   padding: 16px 32px;
@@ -124,7 +130,7 @@ export const CarouselCtaButton = styled.button`
   animation-delay: 0.4s;
 
   &:hover {
-    background: linear-gradient(135deg, #7A3E7A 0%, #9333EA 100%);
+    background: linear-gradient(135deg, #7a3e7a 0%, #9333ea 100%);
     transform: translateY(-2px);
     box-shadow: 0 8px 24px rgba(139, 74, 139, 0.4);
   }
@@ -144,85 +150,105 @@ export const CarouselContent = styled.div`
   gap: 20px;
   max-width: 1000px;
 `;
-
 interface CarouselProps {
-    legenda:string;
-    titulo: string;
-    imagem:string;
-    descricao:string;
+  id: number;
+  subtitle: string;
+  title: string;
+  description: string;
+  backgroundImage: string;
 }
 
-export default function Carousel(){
+export default function Carousel() {
+  const [items, setItems] = useState<CarouselProps[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
-    const items: CarouselProps[] = [{
-    legenda:'confira nossa linha',
-    titulo:'corporal',
-    descricao: 'com benefícios além da hidratação',
-    imagem: Img1
-  },
-  {
-    legenda:'toda linha',
-    titulo:'anti-age',
-    descricao: 'use o cupom ANTIAGE15',
-    imagem: Img2,
-  },
-  {
-    legenda:'',
-    titulo:'kits incríveis',
-    descricao: 'até 50% OFF',
-    imagem: Img3,
-  }];
-
-  const [idxItemAtual, setIdxItemAtual] = useState(0);
-
-   function previousItem() {
-    setIdxItemAtual((prevIdx) => (prevIdx === 0 ? items.length - 1 : prevIdx - 1));
-  }
-
-  function nextItem() {
-    setIdxItemAtual((prevIdx) => (prevIdx === items.length - 1 ? 0 : prevIdx + 1));
-  }
+  const [idxItemAtual, setIdxItemAtual] = useState<number>(0);
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setIdxItemAtual(prevIdxItemAtual => {
-        return (prevIdxItemAtual + 1) % items.length;
-      });
-    }, 4000);
-
-    return () => {
-      clearInterval(timer);
-    };
+    async function fetchItems() {
+      try {
+        const newItems = await carouselService.getCarouselItems();
+        setItems(newItems);
+      } catch (err) {
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError("Ocorreu um erro desconhecido.");
+        }
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchItems();
   }, []);
 
-return (
+  useEffect(() => {
+    if (!loading && items.length > 0) {
+      const timer = setInterval(() => {
+        setIdxItemAtual((prevIdx) => (prevIdx + 1) % items.length);
+      }, 4000);
+      return () => {
+        clearInterval(timer);
+      };
+    }
+  }, [items, loading]);
+
+  const irParaProximo = () => {
+    setIdxItemAtual((prevIdx) => (prevIdx + 1) % items.length);
+  };
+
+  const irParaAnterior = () => {
+    setIdxItemAtual((prevIdx) =>
+      prevIdx === 0 ? items.length - 1 : prevIdx - 1
+    );
+  };
+
+  if (loading) {
+    return <div>Carregando carrossel...</div>;
+  }
+
+  if (error) {
+    return <div>Erro: {error}</div>;
+  }
+
+  const itemAtual = items[idxItemAtual];
+
+  return (
     <CarouselSection
       style={{
-        backgroundImage: `url(${items[idxItemAtual].imagem})`
+        backgroundImage: `url(${itemAtual.backgroundImage})`,
       }}
     >
       <CarouselContainer>
         <CarouselContent>
-          <CarouselNavButton aria-label="Anterior" onClick={previousItem}> 
-            <FontAwesomeIcon width="60" height="24" icon={faAngleLeft} style={{ color: 'white' }} />
+          <CarouselNavButton aria-label="Anterior" onClick={irParaAnterior}>
+            <FontAwesomeIcon
+              width="60"
+              height="24"
+              icon={faAngleLeft}
+              style={{ color: "white" }}
+            />
           </CarouselNavButton>
           <CarouselText>
-            <CarouselSubtitle>{items[idxItemAtual].legenda}</CarouselSubtitle>
-            <CarouselTitle>{items[idxItemAtual].titulo}</CarouselTitle>
-            <CarouselDescription>
-              {items[idxItemAtual].descricao}
-            </CarouselDescription>
+            <CarouselSubtitle>{itemAtual.subtitle}</CarouselSubtitle>
+            <CarouselTitle>{itemAtual.title}</CarouselTitle>
+            <CarouselDescription>{itemAtual.description}</CarouselDescription>
             <CarouselCtaButton>
-              comprar agora <FontAwesomeIcon icon={faAngleRight} style={{ color: 'white' }} />
+              comprar agora{" "}
+              <FontAwesomeIcon icon={faAngleRight} style={{ color: "white" }} />
             </CarouselCtaButton>
           </CarouselText>
-          <CarouselNavButton aria-label="Próximo" onClick={nextItem}>
-            <FontAwesomeIcon width="60" height="24" icon={faAngleRight} style={{ color: 'white' }} />
+          <CarouselNavButton aria-label="Próximo" onClick={irParaProximo}>
+            <FontAwesomeIcon
+              width="60"
+              height="24"
+              icon={faAngleRight}
+              style={{ color: "white" }}
+            />
           </CarouselNavButton>
         </CarouselContent>
       </CarouselContainer>
     </CarouselSection>
   );
-
 }
-
