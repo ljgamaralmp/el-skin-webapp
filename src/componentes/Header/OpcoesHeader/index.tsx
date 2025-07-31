@@ -1,21 +1,30 @@
 import styled from 'styled-components'
 
 const Opcao = styled.li`
-    font-size: 24px;
+    font-size: ${({ theme }) => theme.tamanhoFonte['2xl']};
     display: flex;
     justify-content: left;
-    align-items: left;
+    align-items: center;
     text-align: left;
     height: 100%;
-    padding: 0 50px;
+    padding: 0 ${({ theme }) => theme.espacamento.xxl};
     cursor: pointer;
     min-width: 120px;
+    color: ${({ theme }) => theme.cores.texto.secundario};
+    transition: color ${({ theme }) => theme.transicoes.rapida};
+
+    &:hover {
+        color: ${({ theme }) => theme.cores.primaria};
+    }
 `
 
 const Opcoes = styled.ul`
     display: flex;
-    flex-grow: 1; /* Faz a lista ocupar o espaço disponível, empurrando-a para a esquerda */
-    justify-content: flex-start; /* Garante que os itens comecem da esquerda */
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    flex-grow: 1;
+    justify-content: flex-start;
     
 `
 

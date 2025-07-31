@@ -2,7 +2,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleLeft, faAngleRight } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState } from "react";
 import styled, { keyframes } from "styled-components";
-import api from "axios";
 import { carouselService } from "../../service/carouselService";
 
 const fadeInUp = keyframes`
@@ -21,13 +20,9 @@ export const CarouselSection = styled.section`
   min-height: 500px;
   display: flex;
   align-items: center;
-  background: linear-gradient(
-      135deg,
-      rgba(255, 255, 255, 0.95) 0%,
-      rgba(255, 255, 255, 0.85) 40%,
-      transparent 60%
-    ),
-    linear-gradient(45deg, #f8f6f3 0%, #e8e4e0 100%);
+  background: 
+    ${({ theme }) => theme.cores.gradientePrimario},
+    linear-gradient(45deg, ${({ theme }) => theme.cores.fundo.claro} 0%, #e8e4e0 100%);
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -40,99 +35,95 @@ export const CarouselSection = styled.section`
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(
-      135deg,
-      rgba(255, 255, 255, 0.1) 0%,
-      transparent 50%
-    );
+    background: linear-gradient(135deg, ${({ theme }) => theme.cores.sombra.clara} 0%, transparent 50%);
     pointer-events: none;
   }
 `;
 
 export const CarouselContainer = styled.div`
   width: 100%;
-  max-width: 1200px;
+  max-width: ${({ theme }) => theme.pontosQuebra.xl};
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 ${({ theme }) => theme.espacamento.xl};
   position: relative;
-  z-index: 2;
+  z-index: ${({ theme }) => theme.zIndex.dropdown};
 `;
 
 export const CarouselNavButton = styled.button`
-  background: rgba(255, 255, 255, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: ${({ theme }) => theme.cores.sombra.clara};
+  border: 1px solid ${({ theme }) => theme.cores.sombra.media};
   width: 48px;
   height: 48px;
-  border-radius: 8px;
+  border-radius: ${({ theme }) => theme.raioBorda.md};
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all ${({ theme }) => theme.transicoes.normal};
   backdrop-filter: blur(10px);
-  animation: ${fadeInUp} 0.6s ease-out forwards;
+  animation: ${fadeInUp} ${({ theme }) => theme.transicoes.lenta} forwards;
   animation-delay: 0.05s;
 
   &:hover {
-    background: rgba(255, 255, 255, 0.3);
+    background: ${({ theme }) => theme.cores.sombra.primaria};
     transform: translateX(-2px);
   }
 `;
 
 export const CarouselSubtitle = styled.span`
   display: block;
-  font-size: 16px;
-  color: #8b4a8b;
-  margin-bottom: 8px;
-  font-weight: 400;
+  font-size: ${({ theme }) => theme.tamanhoFonte.base};
+  color: ${({ theme }) => theme.cores.primaria};
+  margin-bottom: ${({ theme }) => theme.espacamento.sm};
+  font-weight: ${({ theme }) => theme.pesoFonte.normal};
   letter-spacing: 0.5px;
-  animation: ${fadeInUp} 0.6s ease-out forwards;
+  animation: ${fadeInUp} ${({ theme }) => theme.transicoes.lenta} forwards;
   animation-delay: 0.1s;
 `;
 
 export const CarouselTitle = styled.h1`
-  font-size: 64px;
-  font-weight: 700;
-  color: #8b4a8b;
-  margin: 0 0 16px 0;
-  line-height: 1.1;
-  text-shadow: 2px 2px 4px rgba(139, 74, 139, 0.1);
-  animation: ${fadeInUp} 0.6s ease-out forwards;
+  font-size: ${({ theme }) => theme.tamanhoFonte['6xl']};
+  font-weight: ${({ theme }) => theme.pesoFonte.bold};
+  color: ${({ theme }) => theme.cores.primaria};
+  margin: 0 0 ${({ theme }) => theme.espacamento.md} 0;
+  line-height: ${({ theme }) => theme.alturaLinha.justa};
+  text-shadow: 2px 2px 4px ${({ theme }) => theme.cores.sombra.media};
+  animation: ${fadeInUp} ${({ theme }) => theme.transicoes.lenta} forwards;
   animation-delay: 0.2s;
 `;
 
 export const CarouselDescription = styled.p`
-  font-size: 18px;
-  color: #666;
-  margin-bottom: 32px;
+  font-size: ${({ theme }) => theme.tamanhoFonte.base};
+  color: ${({ theme }) => theme.cores.texto.secundario};
+  margin-bottom: ${({ theme }) => theme.espacamento.md};
   line-height: 1.5;
   max-width: 400px;
-  animation: ${fadeInUp} 0.6s ease-out forwards;
+  animation: ${fadeInUp} ${({ theme }) => theme.transicoes.lenta} forwards;
   animation-delay: 0.3s;
 `;
 
 export const CarouselCtaButton = styled.button`
-  background: linear-gradient(135deg, #8b4a8b 0%, #a855a8 100%);
-  color: white;
+  background: linear-gradient(135deg, ${({ theme }) => theme.cores.primaria} 0%, ${({ theme }) => theme.cores.secundaria} 100%);
+  color: ${({ theme }) => theme.cores.texto.branco};
   border: none;
-  padding: 16px 32px;
-  border-radius: 32px;
-  font-size: 16px;
-  font-weight: 600;
+  padding: ${({ theme }) => theme.espacamento.md} ${({ theme }) => theme.espacamento.xl};
+  border-radius: ${({ theme }) => theme.raioBorda.pilula};
+  font-size: ${({ theme }) => theme.tamanhoFonte.base};
+  font-weight: ${({ theme }) => theme.pesoFonte.semibold};
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all ${({ theme }) => theme.transicoes.normal};
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  box-shadow: 0 4px 16px rgba(139, 74, 139, 0.3);
+  gap: ${({ theme }) => theme.espacamento.sm};
+  box-shadow: ${({ theme }) => theme.sombras.primaria};
   text-transform: lowercase;
-  animation: ${fadeInUp} 0.6s ease-out forwards;
+  animation: ${fadeInUp} ${({ theme }) => theme.transicoes.lenta} forwards;
   animation-delay: 0.4s;
 
   &:hover {
-    background: linear-gradient(135deg, #7a3e7a 0%, #9333ea 100%);
+    background: linear-gradient(135deg, ${({ theme }) => theme.cores.sombra.clara} 0%, ${({ theme }) => theme.cores.sombra.primaria} 100%);
     transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(139, 74, 139, 0.4);
+    box-shadow: ${({ theme }) => theme.sombras.primariaHover};
   }
 
   &:active {
@@ -147,7 +138,7 @@ export const CarouselText = styled.div`
 export const CarouselContent = styled.div`
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: ${({ theme }) => theme.espacamento.xl};
   max-width: 1000px;
 `;
 interface CarouselProps {

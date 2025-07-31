@@ -4,6 +4,6 @@ import Sobre from './Sobre';
 
 test('tela Sobre deve ser renderizada', () => {
   render(<Sobre />);
-  expect(screen.getByText('Sobre Nós')).toBeInTheDocument();
+  expect(screen.getByText('Sobre a AL SKIN')).toBeInTheDocument();
 });
 

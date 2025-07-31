@@ -3,9 +3,9 @@ import styled from 'styled-components'
 import OpcoesFooter from './OpcoesFooter'
 
 const FooterContainer = styled.footer`
-    background-color: #F5F5F5;
+    background-color: ${({ theme }) => theme.cores.fundo.cinza};
     align-items: center;    /* 2. Centraliza os itens na horizontal */
-    padding: 20px 0;        /* 3. (Opcional) Adiciona um espaçamento para o rodapé respirar */
+    padding: ${({ theme }) => theme.espacamento.xl} 0;
     display: flex;
     flex-direction: column;
 `

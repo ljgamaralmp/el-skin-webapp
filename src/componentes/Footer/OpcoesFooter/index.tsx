@@ -5,15 +5,15 @@ const FooterColumn = styled.div`
   display: flex;
   flex-direction: column; 
   align-items: flex-start; 
-  padding: 0 20px;
+  padding: 0 ${({ theme }) => theme.espacamento.xl};
   min-width: 180px;
 `
 const ColumnTitle = styled.h3`
-  font-size: 16px;
-  font-weight: bold; 
+  font-size: ${({ theme }) => theme.tamanhoFonte.base};
+  font-weight: ${({ theme }) => theme.pesoFonte.bold};
   text-decoration: underline;
-  margin-bottom: 16px; // Espaço entre o título e a lista
-  color: #333;
+  margin-bottom: ${({ theme }) => theme.espacamento.md};
+  color: ${({ theme }) => theme.cores.texto.primario};
 `
 const LinkList = styled.ul`
   cursor: pointer;
@@ -22,11 +22,11 @@ const LinkList = styled.ul`
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 8px; // Espaço entre cada link
+  gap: ${({ theme }) => theme.espacamento.sm};
 `
 const LinkItem = styled.li`
-  font-size: 14px;
-  color: #555;
+  font-size: ${({ theme }) => theme.tamanhoFonte.sm};
+  color: ${({ theme }) => theme.cores.texto.secundario};
 
   
   &:hover {

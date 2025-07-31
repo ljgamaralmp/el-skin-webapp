@@ -3,7 +3,7 @@ import Topo from './Topo'
 import styled from 'styled-components'
 
 const HeaderContainer = styled.header`
-    background-color: #FFF;
+    background-color: ${({ theme }) => theme.cores.fundo.branco};
     display: column;
     justify-content: center;
 `

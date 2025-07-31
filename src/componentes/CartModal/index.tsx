@@ -10,10 +10,10 @@ const ModalOverlay = styled.div`
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.6);
+  background-color: ${({ theme }) => theme.cores.carrinho.overlay};
   display: flex;
   justify-content: flex-end;
-  z-index: 1000;
+  z-index: ${({ theme }) => theme.zIndex.modal};
 `;
 
 const ModalContent = styled.div`
@@ -21,9 +21,9 @@ const ModalContent = styled.div`
   max-width: 90vw; /* Garante que não seja muito largo em telas pequenas */
   height: 100%;
   max-height: 100vh; /* A altura máxima será a da tela */
-  background-color: #fff;
-  padding: 2rem;
-  box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+  background-color: ${({ theme }) => theme.cores.fundo.branco};
+  padding: ${({ theme }) => theme.espacamento.xl};
+  box-shadow: ${({ theme }) => theme.sombras.carrinho};
   display: flex;
   flex-direction: column;
   box-sizing: border-box; /* Garante que o padding seja incluído na altura/largura total */
@@ -33,16 +33,22 @@ const ModalHeader = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 1rem;
-  margin-bottom: 1rem;
+  border-bottom: 1px solid ${({ theme }) => theme.cores.borda.clara};
+  padding-bottom: ${({ theme }) => theme.espacamento.md};
+  margin-bottom: ${({ theme }) => theme.espacamento.md};
 `;
 
 const CloseButton = styled.button`
   background: none;
   border: none;
-  font-size: 1.5rem;
+  font-size: ${({ theme }) => theme.tamanhoFonte['2xl']};
   cursor: pointer;
+  color: ${({ theme }) => theme.cores.texto.terciario};
+  transition: color ${({ theme }) => theme.transicoes.rapida};
+
+  &:hover {
+    color: ${({ theme }) => theme.cores.texto.primario};
+  }
 `;
 
 const CartItemsList = styled.div`
@@ -52,16 +58,16 @@ const CartItemsList = styled.div`
 
 const CartItem = styled.div`
   display: flex;
-  margin-bottom: 1rem;
-  border-bottom: 1px solid #f0f0f0;
-  padding-bottom: 1rem;
+  margin-bottom: ${({ theme }) => theme.espacamento.md};
+  border-bottom: 1px solid ${({ theme }) => theme.cores.borda.escura};
+  padding-bottom: ${({ theme }) => theme.espacamento.md};
 `;
 
 const ItemImage = styled.img`
   width: 80px;
   height: 80px;
-  object-fit: cover;
-  margin-right: 1rem;
+  margin-right: ${({ theme }) => theme.espacamento.md};
+  border-radius: ${({ theme }) => theme.raioBorda.md};
 `;
 
 const ItemInfo = styled.div`
@@ -71,38 +77,49 @@ const ItemInfo = styled.div`
 const ItemControls = styled.div`
   display: flex;
   align-items: center;
-  margin-top: 0.5rem;
+  margin-top: ${({ theme }) => theme.espacamento.sm};
 `;
 
 const QuantityButton = styled.button`
-  border: 1px solid #ccc;
-  background: #f7f7f7;
+  border: 1px solid ${({ theme }) => theme.cores.borda.media};
+  background: ${({ theme }) => theme.cores.fundo.cinza};
   width: 30px;
   height: 30px;
-  cursor: pointer;
+  border-radius: ${({ theme }) => theme.raioBorda.sm};
+  transition: background-color ${({ theme }) => theme.transicoes.rapida};
+
+  &:hover {
+    background-color: ${({ theme }) => theme.cores.botao.hover};
+  }
 `;
 
 const QuantityDisplay = styled.span`
-  padding: 0 1rem;
-  font-weight: bold;
+  padding: 0 ${({ theme }) => theme.espacamento.md};
+  font-weight: ${({ theme }) => theme.pesoFonte.bold};
 `;
 
 const RemoveButton = styled.button`
   background: none;
   border: none;
-  color: #e74c3c;
+  color: ${({ theme }) => theme.cores.carrinho.remover};
   cursor: pointer;
   margin-left: auto;
-  font-size: 1rem;
+  font-size: ${({ theme }) => theme.tamanhoFonte.base};
+  transition: transform ${({ theme }) => theme.transicoes.rapida};
+  
+  &:hover {
+    transform: scale(1.1);
+  }
 `;
 
 const ModalFooter = styled.div`
-  padding-top: 1rem;
-  border-top: 1px solid #eee;
+  padding-top: ${({ theme }) => theme.espacamento.md};
+  border-top: 1px solid ${({ theme }) => theme.cores.borda.clara};
 `;
 
 const Total = styled.h3`
   text-align: right;
+  font-size: ${({ theme }) => theme.tamanhoFonte.lg};
 `;
 
 
