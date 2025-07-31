@@ -1,3 +1,4 @@
+import 'normalize.css';
 import { SearchProvider } from './contexts/SearchContext';
 import { CartProvider } from './contexts/CartContext';
 import { createGlobalStyle } from 'styled-components';
