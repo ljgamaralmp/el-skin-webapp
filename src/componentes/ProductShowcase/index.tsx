@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import ProductCard from '../ProductCard';
 import { useEffect, useState } from 'react';
-import { useSearch } from '../../contexts/SearchContext'; 
+import { useSearch } from '../../hooks/useSearch'; 
 import { productService } from '../../service/productService';
 import { useCartContext } from '../../contexts/CartContext';
 import { Produto } from '../../types/types';
@@ -20,8 +20,9 @@ function ProductShowcase() {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  const { termoDeBusca } = useSearch();
-  const { addToCart } = useCartContext();
+ //'search' vem diretamente do store.
+  const { search } = useSearch();
+  const { addToCart } = useCartContext(); // Contexto do carrinho permanece o mesmo.
 
   useEffect(() => {
     const fetchItems = async () => {
@@ -40,8 +41,10 @@ function ProductShowcase() {
     fetchItems();
   }, []); 
 
+  // reage à variável 'search' do Redux.
   useEffect(() => {
-    const termo = termoDeBusca.toLowerCase();
+    // 'search' em vez de 'termoDeBusca'
+    const termo = search.toLowerCase();
     
     const resultadoFiltro = todosOsProdutos.filter(produto =>
       produto.name.toLowerCase().includes(termo) ||
@@ -49,7 +52,8 @@ function ProductShowcase() {
     );
     
     setProdutosFiltrados(resultadoFiltro);
-  }, [termoDeBusca, todosOsProdutos]); 
+  // A dependência do useEffect é a variável 'search' do Redux
+  }, [search, todosOsProdutos]); 
 
   if (loading) return <p style={{ padding: '20px' }}>Carregando produtos...</p>;
   if (error) return <p style={{ padding: '20px' }}>Erro ao carregar produtos: {error}</p>;
@@ -65,7 +69,8 @@ function ProductShowcase() {
           <ProductCard key={produto.id} produto={produto} onAddToCart={addToCart} onProductClick={handleProductClick} />
         ))
       ) : (
-        <p>Nenhum produto encontrado para "{termoDeBusca}".</p>
+        //Também usa a variável 'search'.
+        <p>Nenhum produto encontrado para "{search}".</p>
       )}
     </ShowcaseContainer>
   );

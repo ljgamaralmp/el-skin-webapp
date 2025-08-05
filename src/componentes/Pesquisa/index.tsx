@@ -1,7 +1,7 @@
 import Input from '../Input'
 import lupa from '../../assets/lupa.svg'
 import styled from 'styled-components'
-import { useSearch } from '../../contexts/SearchContext'
+import { useSearch } from '../../hooks/useSearch'
 
 const PesquisaContainer = styled.div`
     background-color: white;
@@ -23,10 +23,10 @@ const IconeLupa = styled.img`
     cursor: pointer;
 `
 export default function Pesquisa() {
-    const { termoDeBusca, setTermoDeBusca } = useSearch();
+    const { search, setSearch, clearSearch } = useSearch();
     return (
             <PesquisaContainer>
-                <Input value={termoDeBusca} onChange={(evento) => setTermoDeBusca(evento.target.value)}
+                <Input value={search} onChange={(evento) => setSearch(evento.target.value)}
                 />
                 <IconeLupa src={lupa} alt="Ícone de Lupa" />
             </PesquisaContainer>
