@@ -17,5 +17,10 @@ export const productService = {
   async getProducts(): Promise<Produto[]> {
     const response = await api.get<Produto[]>(API_CONFIG.ENDPOINTS.PRODUCTS);
     return response.data;
-  }
+  },
+
+  async getProductById(id: string): Promise<Produto> {
+    const response = await api.get<Produto>(`${API_CONFIG.ENDPOINTS.PRODUCTS}/${id}`);
+    return response.data;
+  },
 }

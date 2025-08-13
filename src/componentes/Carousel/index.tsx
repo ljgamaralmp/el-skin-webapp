@@ -2,7 +2,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleLeft, faAngleRight } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState } from "react";
 import styled, { keyframes } from "styled-components";
-import { carouselService } from "../../service/carouselService";
+import { useGetCarouselItemsQuery } from "../../store/api/apiSlice";
 
 const fadeInUp = keyframes`
   from {
@@ -150,32 +150,18 @@ interface CarouselProps {
 }
 
 export default function Carousel() {
-  const [items, setItems] = useState<CarouselProps[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const {
+      data: items = [], 
+      isLoading,
+      isError,
+      error,
+    } = useGetCarouselItemsQuery();
+
 
   const [idxItemAtual, setIdxItemAtual] = useState<number>(0);
 
   useEffect(() => {
-    async function fetchItems() {
-      try {
-        const newItems = await carouselService.getCarouselItems();
-        setItems(newItems);
-      } catch (err) {
-        if (err instanceof Error) {
-          setError(err.message);
-        } else {
-          setError("Ocorreu um erro desconhecido.");
-        }
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchItems();
-  }, []);
-
-  useEffect(() => {
-    if (!loading && items.length > 0) {
+    if (!isLoading && items.length > 0) {
       const timer = setInterval(() => {
         setIdxItemAtual((prevIdx) => (prevIdx + 1) % items.length);
       }, 4000);
@@ -183,7 +169,7 @@ export default function Carousel() {
         clearInterval(timer);
       };
     }
-  }, [items, loading]);
+  }, [items, isLoading]);
 
   const irParaProximo = () => {
     setIdxItemAtual((prevIdx) => (prevIdx + 1) % items.length);
@@ -195,12 +181,12 @@ export default function Carousel() {
     );
   };
 
-  if (loading) {
+  if (isLoading) {
     return <div>Carregando carrossel...</div>;
   }
 
-  if (error) {
-    return <div>Erro: {error}</div>;
+  if (isError) {
+    return <div>Erro: {error.toString()}</div>;
   }
 
   const itemAtual = items[idxItemAtual];

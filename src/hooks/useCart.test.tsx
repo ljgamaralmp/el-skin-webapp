@@ -1,8 +1,34 @@
 import { renderHook, act } from '@testing-library/react';
+import { Provider } from 'react-redux';
+import { combineReducers, configureStore} from '@reduxjs/toolkit';
+import { ReactNode } from 'react';
 import { useCart } from './useCart';
 import { Produto as Product } from '../types/types';
+import { RootState } from '../store';
 
-// Produto mock para usar nos testes
+import searchReducer from '../store/slices/searchSlice';
+import cartReducer from '../store/slices/cartSlice';
+import productsReducer from '../store/slices/productSlice';
+
+const rootReducer = combineReducers({
+  search: searchReducer,
+  cart: cartReducer,
+  products: productsReducer,
+});
+
+const renderUseCartHook = (preloadedState?: Partial<RootState>) => {
+  const store = configureStore({
+    reducer: rootReducer,
+    preloadedState,
+  });
+
+  const wrapper = ({ children }: { children: ReactNode }) => (
+    <Provider store={store}>{children}</Provider>
+  );
+
+  return renderHook(() => useCart(), { wrapper });
+};
+
 const mockProduct1: Product = {
   id: 1,
   name: 'Produto Teste 1',
@@ -21,28 +47,23 @@ const mockProduct2: Product = {
   tags: []
 };
 
-
 describe('Hook: useCart', () => {
 
   test('deve iniciar com o carrinho vazio e o modal fechado', () => {
-    // Atuar: Renderiza o hook
-    const { result } = renderHook(() => useCart());
+    const { result } = renderUseCartHook();
 
-    // Afirmar: Verifica o estado inicial
     expect(result.current.cartItems).toEqual([]);
     expect(result.current.isCartOpen).toBe(false);
     expect(result.current.cartTotal).toBe(0);
   });
 
   test('deve adicionar um novo produto ao carrinho', () => {
-    const { result } = renderHook(() => useCart());
+    const { result } = renderUseCartHook();
 
-    // Atuar: Chama a função addToCart (dentro de act)
     act(() => {
       result.current.addToCart(mockProduct1);
     });
 
-    // Afirmar: Verifica se o item foi adicionado e o total atualizado
     expect(result.current.cartItems).toHaveLength(1);
     expect(result.current.cartItems[0].name).toBe('Produto Teste 1');
     expect(result.current.cartItems[0].quantity).toBe(1);
@@ -50,69 +71,72 @@ describe('Hook: useCart', () => {
   });
 
   test('deve incrementar a quantidade de um produto existente', () => {
-    const { result } = renderHook(() => useCart());
+    const initialState: Partial<RootState> = {
+      cart: {
+        cartItems: [{ ...mockProduct1, quantity: 1 }],
+        isCartOpen: false,
+      }
+    };
+    const { result } = renderUseCartHook(initialState);
 
-    // Atuar: Adiciona o mesmo produto duas vezes
     act(() => {
       result.current.addToCart(mockProduct1);
     });
-    act(() => {
-      result.current.addToCart(mockProduct1);
-    });
 
-    // Afirmar: Verifica se a quantidade foi incrementada
     expect(result.current.cartItems).toHaveLength(1);
     expect(result.current.cartItems[0].quantity).toBe(2);
     expect(result.current.cartTotal).toBe(200);
   });
 
   test('deve remover um produto do carrinho', () => {
-    const { result } = renderHook(() => useCart());
+    const initialState: Partial<RootState> = {
+      cart: {
+        cartItems: [
+          { ...mockProduct1, quantity: 1 },
+          { ...mockProduct2, quantity: 1 }
+        ],
+        isCartOpen: false
+      }
+    };
+    const { result } = renderUseCartHook(initialState);
 
-    // Organizar: Adiciona dois produtos
     act(() => {
-      result.current.addToCart(mockProduct1);
-      result.current.addToCart(mockProduct2);
+      result.current.removeFromCart(1);
     });
 
-    // Atuar: Remove o primeiro produto
-    act(() => {
-      result.current.removeFromCart(1); // ID do mockProduct1
-    });
-
-    // Afirmar: Verifica se apenas o segundo produto permaneceu
     expect(result.current.cartItems).toHaveLength(1);
     expect(result.current.cartItems[0].id).toBe(2);
     expect(result.current.cartTotal).toBe(50);
   });
 
   test('deve atualizar a quantidade de um produto', () => {
-    const { result } = renderHook(() => useCart());
+    const initialState: Partial<RootState> = {
+      cart: {
+        cartItems: [{ ...mockProduct1, quantity: 1 }],
+        isCartOpen: false
+      }
+    };
+    const { result } = renderUseCartHook(initialState);
 
-    // Organizar: Adiciona um produto
     act(() => {
-      result.current.addToCart(mockProduct1);
+      result.current.updateQuantity(1, 5);
     });
 
-    // Atuar: Atualiza a quantidade para 5
-    act(() => {
-      result.current.updateQuantity(1, 5); // ID do mockProduct1
-    });
-
-    // Afirmar: Verifica a nova quantidade e total
     expect(result.current.cartItems[0].quantity).toBe(5);
     expect(result.current.cartTotal).toBe(500);
   });
   
   test('deve remover o item se a quantidade for atualizada para 0 ou menos', () => {
-    const { result } = renderHook(() => useCart());
+    const initialState: Partial<RootState> = {
+      cart: {
+        cartItems: [{ ...mockProduct1, quantity: 3 }],
+        isCartOpen: false
+      }
+    };
+    const { result } = renderUseCartHook(initialState);
 
     act(() => {
-      result.current.addToCart(mockProduct1);
-    });
-
-    act(() => {
-      result.current.updateQuantity(1, 0); // Atualiza para 0
+      result.current.updateQuantity(1, 0);
     });
 
     expect(result.current.cartItems).toHaveLength(0);
@@ -120,21 +144,18 @@ describe('Hook: useCart', () => {
   });
 
   test('deve abrir e fechar o modal do carrinho', () => {
-    const { result } = renderHook(() => useCart());
+    const { result } = renderUseCartHook();
 
-    expect(result.current.isCartOpen).toBe(false); // Estado inicial
+    expect(result.current.isCartOpen).toBe(false);
 
-    // Atuar: Abre o modal
     act(() => {
       result.current.openCart();
     });
-    expect(result.current.isCartOpen).toBe(true); // Verifica se abriu
+    expect(result.current.isCartOpen).toBe(true);
 
-    // Atuar: Fecha o modal
     act(() => {
       result.current.closeCart();
     });
-    expect(result.current.isCartOpen).toBe(false); // Verifica se fechou
+    expect(result.current.isCartOpen).toBe(false);
   });
-
 });

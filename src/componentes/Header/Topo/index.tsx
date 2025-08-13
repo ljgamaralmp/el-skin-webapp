@@ -1,7 +1,9 @@
 import Pesquisa from '../../Pesquisa'
 import sacola from '../../../assets/sacola.png'
 import styled from 'styled-components'
-import { useCartContext } from '../../../contexts/CartContext';
+
+import { useSelector, useDispatch } from 'react-redux';
+import { openCart, selectCartItemCount } from '../../../store/slices/cartSlice';
 
 const TopoContainer = styled.div`
     display: flex;
@@ -13,7 +15,7 @@ const CartButton = styled.button`
   position: relative;
   background: none;
   border: none;
-  color: ${({ theme }) => theme.cores.texto.primario}; /* Mudado para ser visível em fundo branco */
+  color: ${({ theme }) => theme.cores.texto.primario}; 
   font-size: ${({ theme }) => theme.tamanhoFonte['2xl']};
   cursor: pointer;
 `;
@@ -34,33 +36,26 @@ const CartCount = styled.span`
   align-items: center;
 `;
 
+
 export default function Topo() {
-  const { openCart, cartItems } = useCartContext();
+  
+  const dispatch = useDispatch();
+  const totalItems = useSelector(selectCartItemCount);
 
-  const totalItems = cartItems.reduce((total, item) => total + item.quantity, 0);
+  const handleOpenCart = () => {
+    dispatch(openCart());
+  };
 
-    return (
-      <TopoContainer>
-        <p style={{ marginLeft: "2rem" }}>AL SKIN</p>
-        <Pesquisa />
-        <CartButton
-          onClick={openCart}
-          style={{
-            background: "none",
-            border: "none",
-            cursor: "pointer",
-            marginRight: "5rem",
-          }}
-        >
-          <img
-            src={sacola}
-            alt="Ícone de Sacola"
-            style={{ width: "3rem", height: "3rem", marginTop: "3rem" }}
-          />
-          {totalItems > 0 && <CartCount>{totalItems}</CartCount>}
-        
-        </CartButton>
-      </TopoContainer>
-    );
+  return (
+    <TopoContainer>
+      <p style={{ marginLeft: "2rem" }}>AL SKIN</p>
+      <Pesquisa />
+     
+      <CartButton onClick={handleOpenCart} style={{ background: "none", border: "none", cursor: "pointer", marginRight: "5rem" }}>
+        <img src={sacola} alt="Ícone de Sacola"  style={{ width: "3rem", height: "3rem", marginTop: "3rem" }}/>
+        {totalItems > 0 && <CartCount>{totalItems}</CartCount>}
+      </CartButton>
+    </TopoContainer>
+  );
 }
 

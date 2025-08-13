@@ -1,22 +1,23 @@
-import { useDispatch, useSelector } from 'react-redux';
-import type { RootState, AppDispatch } from '../store';
-import { setSearch, clearSearch } from '../store/slices/searchSlice';
+import { useCallback } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState, AppDispatch } from '../store'; 
+import { setSearch, clearSearch } from '../store/slices/searchSlice'; 
 
 export const useSearch = () => {
-  const dispatch = useDispatch<AppDispatch>();
-  const search = useSelector((state: RootState) => state.search.search);
+  const dispatch: AppDispatch = useDispatch();
+  const searchTerm = useSelector((state: RootState) => state.search.search);
 
-  const updateSearch = (term: string) => {
+  const setSearchTerm = useCallback((term: string) => {
     dispatch(setSearch(term));
-  };
+  }, [dispatch]);
 
-  const resetSearch = () => {
+  const clearSearchTerm = useCallback(() => {
     dispatch(clearSearch());
-  };
+  }, [dispatch]);
 
   return {
-    search,
-    setSearch: updateSearch,
-    clearSearch: resetSearch,
+    search: searchTerm,
+    setSearch: setSearchTerm,
+    clearSearch: clearSearchTerm,
   };
 };

@@ -1,12 +1,42 @@
 import '@testing-library/jest-dom';
-import { act, render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
+import { ReactNode } from 'react';
+import { Provider } from 'react-redux';
+import { configureStore, combineReducers } from '@reduxjs/toolkit';
+import { RootState } from '../../store';
+import { Produto } from '../../types/types';
+
+import searchReducer from '../../store/slices/searchSlice';
+import cartReducer, { addToCart } from '../../store/slices/cartSlice';
+import productsReducer from '../../store/slices/productSlice';
+
 import ProductShowcase from './index';
 
-//Organizar
+const rootReducer = combineReducers({
+  search: searchReducer,
+  cart: cartReducer,
+  products: productsReducer,
+});
 
-const mockProducts = [
+const renderWithProviders = (
+  ui: React.ReactElement,
+  { preloadedState }: { preloadedState?: Partial<RootState> } = {}
+) => {
+  const store = configureStore({
+    reducer: rootReducer,
+    preloadedState,
+  });
+
+  const Wrapper = ({ children }: { children: ReactNode }) => (
+    <Provider store={store}>{children}</Provider>
+  );
+
+  return { store, ...render(ui, { wrapper: Wrapper }) };
+};
+
+const mockProducts: Produto[] = [
   {
-    id: '1',
+    id: 1,
     name: 'Produto 1',
     description: 'Descrição do produto 1',
     price: 99.99,
@@ -14,7 +44,7 @@ const mockProducts = [
     tags: [{ label: 'Proteção', type: 'protection' as const }]
   },
   {
-    id: '2',
+    id: 2,
     name: 'Produto 2',
     description: 'Descrição do produto 2',
     price: 149.99,
@@ -23,81 +53,66 @@ const mockProducts = [
   }
 ];
 
-// Mock dos serviços
-jest.mock('../../service/productService', () => ({
-  productService: {
-    getProducts: () => mockProducts,
-  },
-}));
+describe('Componente ProductShowcase', () => {
 
-// Mock do SearchContext para controlar o termo de busca
-let mockTermoDeBusca = '';
+  test('deve exibir produtos corretamente quando eles estão no estado do Redux', () => {
+    const preloadedState: Partial<RootState> = {
+      products: {
+        products: mockProducts,
+        loading: 'succeeded',
+        error: null,
+        currentProduct: null,
+        currentProductLoading: 'idle',
+      }
+    };
 
-const mockAddItem = jest.fn();
-
-jest.mock('../../contexts/SearchContext', () => ({
-  useSearch: () => ({
-    termoDeBusca: mockTermoDeBusca,
-  }),
-}));
-
-jest.mock('../../contexts/CartContext', () => ({
-  useCartContext: () => ({
-    addToCart: mockAddItem
-  }),
-}));
-
-// Função auxiliar para renderizar com act. Ela é necessaria sempre que houver atualizações de estado que precisam ser 
-// finalizadas antes que você possa verificar o resultado final na tela.
-const renderWithAct = async () => {
-  let component;
-  await act(async () => {
-    component = render(<ProductShowcase />);
+    renderWithProviders(<ProductShowcase />, { preloadedState });
+    
+    expect(screen.getByText('Produto 1')).toBeInTheDocument();
+    expect(screen.getByText('Descrição do produto 1')).toBeInTheDocument();
+    expect(screen.getByText(/99,99/)).toBeInTheDocument();
+    expect(screen.getByText('Produto 2')).toBeInTheDocument();
+    expect(screen.getByText('Descrição do produto 2')).toBeInTheDocument();
+    expect(screen.getByText(/149,99/)).toBeInTheDocument();
   });
-  return component;
-};
 
-//organizar
-test('deve exibir produtos corretamente', async () => {
-  //Atuar
-  await renderWithAct();
-  //Afirmar
-  expect(screen.getByText('Produto 1')).toBeInTheDocument();
-  expect(screen.getByText('Descrição do produto 1')).toBeInTheDocument();
-  expect(screen.getByText('R$ 99,99')).toBeInTheDocument();
+  test('Deve chamar console.log ao clicar no produto', () => {
+    const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+    const preloadedState: Partial<RootState> = {
+      products: { products: mockProducts, loading: 'succeeded', error: null, currentProduct: null, currentProductLoading: 'idle' }
+    };
+    renderWithProviders(<ProductShowcase />, { preloadedState });
 
-  expect(screen.getByText('Produto 2')).toBeInTheDocument();
-  expect(screen.getByText('Descrição do produto 2')).toBeInTheDocument();
-  expect(screen.getByText('R$ 149,99')).toBeInTheDocument();
-});
-//organizar
-test('Deve chamar console.log ao clicar no produto', async () => {
-  const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => undefined);
-  // Atuar
-  await renderWithAct();
+    const productCard = screen.getByText('Produto 1');
+    fireEvent.click(productCard);
+    
+    expect(consoleSpy).toHaveBeenCalledWith('Produto clicado: 1');
+    consoleSpy.mockRestore();
+  });
 
-  const productCard = screen.getByText('Produto 1');
-  productCard.click();
-  // Afirmar
-  expect(consoleSpy).toHaveBeenCalledWith('Produto clicado: 1');
-});
-//Organizar
-test('Deve chamar addItem ao clicar no botão comprar', async () => {
-  // Atuar
-  await renderWithAct();
+  test('Deve despachar a ação addToCart ao clicar no botão comprar', () => {
+    const preloadedState: Partial<RootState> = {
+      products: { products: mockProducts, loading: 'succeeded', error: null, currentProduct: null, currentProductLoading: 'idle' }
+    };
+    const { store } = renderWithProviders(<ProductShowcase />, { preloadedState });
+    const dispatchSpy = jest.spyOn(store, 'dispatch');
+    
+    const buyButtons = screen.getAllByRole('button', { name: /comprar/i });
+    fireEvent.click(buyButtons[0]);
 
-  // Afirmar
-  const buyButtons = screen.getAllByTestId('add-to-cart-button');
-  buyButtons[0].click();
-  expect(mockAddItem).toHaveBeenCalledTimes(1);
-});
+    expect(dispatchSpy).toHaveBeenCalledTimes(1);
+    expect(dispatchSpy).toHaveBeenCalledWith(addToCart(mockProducts[0]));
+  });
 
-//organizar
-test('Deve filtrar produtos com base no termo de busca', async () => {
-  mockTermoDeBusca = 'Produto 1';
-  // Atuar
-  await renderWithAct();
-  // Afirmar
-  expect(screen.getByText('Produto 1')).toBeInTheDocument();
-  expect(screen.queryByText('Produto 2')).not.toBeInTheDocument();
+  test('Deve filtrar produtos com base no termo de busca do estado Redux', () => {
+    const preloadedState: Partial<RootState> = {
+      products: { products: mockProducts, loading: 'succeeded', error: null, currentProduct: null, currentProductLoading: 'idle' },
+      search: { search: 'Produto 1' }
+    };
+    
+    renderWithProviders(<ProductShowcase />, { preloadedState });
+    
+    expect(screen.getByText('Produto 1')).toBeInTheDocument();
+    expect(screen.queryByText('Produto 2')).not.toBeInTheDocument();
+  });
 });

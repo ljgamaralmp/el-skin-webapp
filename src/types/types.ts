@@ -9,3 +9,6 @@ export interface Produto {
     type: 'protection' | 'face';
   }>;
 }
+export interface CartItem extends Produto {
+  quantity: number;
+}

@@ -1,6 +1,14 @@
 import React from 'react';
 import styled from 'styled-components';
-import { useCartContext } from '../../contexts/CartContext';
+import { useSelector, useDispatch } from 'react-redux';
+import {
+  closeCart,
+  removeFromCart,
+  updateQuantity,
+  selectIsCartOpen,
+  selectCartItems,
+  selectCartTotal
+} from '../../store/slices/cartSlice';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMinus, faTimes, faTrash, faPlus } from '@fortawesome/free-solid-svg-icons';
 
@@ -18,15 +26,15 @@ const ModalOverlay = styled.div`
 
 const ModalContent = styled.div`
   width: 450px;
-  max-width: 90vw; /* Garante que não seja muito largo em telas pequenas */
+  max-width: 90vw; 
   height: 100%;
-  max-height: 100vh; /* A altura máxima será a da tela */
+  max-height: 100vh; 
   background-color: ${({ theme }) => theme.cores.fundo.branco};
   padding: ${({ theme }) => theme.espacamento.xl};
   box-shadow: ${({ theme }) => theme.sombras.carrinho};
   display: flex;
   flex-direction: column;
-  box-sizing: border-box; /* Garante que o padding seja incluído na altura/largura total */
+  box-sizing: border-box; 
 `;
 
 const ModalHeader = styled.div`
@@ -36,6 +44,22 @@ const ModalHeader = styled.div`
   border-bottom: 1px solid ${({ theme }) => theme.cores.borda.clara};
   padding-bottom: ${({ theme }) => theme.espacamento.md};
   margin-bottom: ${({ theme }) => theme.espacamento.md};
+`;
+
+const Button = styled.button`
+  background-color: ${({ theme }) => theme.cores.primaria};
+  color: ${({ theme }) => theme.cores.texto.branco};
+  border: none;
+  border-radius: ${({ theme }) => theme.raioBorda.sm};
+  padding: ${({ theme }) => theme.espacamento.sm} ${({ theme }) => theme.espacamento.md};
+  cursor: pointer;
+  font-size: ${({ theme }) => theme.tamanhoFonte.sm};
+  font-weight: ${({ theme }) => theme.pesoFonte.bold};
+  transition: background-color ${({ theme }) => theme.transicoes.rapida};
+
+  &:hover {
+    background-color: ${({ theme }) => theme.cores.primariaClara};
+  }
 `;
 
 const CloseButton = styled.button`
@@ -124,17 +148,29 @@ const Total = styled.h3`
 
 
 export function CartModal() {
-  const { isCartOpen, closeCart, cartItems, removeFromCart, updateQuantity, cartTotal } = useCartContext();
+  //dados diretamente do store do Redux com os seletores
+  const isCartOpen = useSelector(selectIsCartOpen);
+  const cartItems = useSelector(selectCartItems); 
+  const cartTotal = useSelector(selectCartTotal);
+  
+  
+  const dispatch = useDispatch();
 
   if (!isCartOpen) return null;
 
+  //Funções que agora despacham ações para o Redux
+  const handleCloseCart = () => dispatch(closeCart());
+  const handleRemoveFromCart = (id: number) => dispatch(removeFromCart(id));
+  const handleUpdateQuantity = (id: number, quantity: number) => dispatch(updateQuantity({ productId: id, quantity }));
+
   return (
-    <ModalOverlay onClick={closeCart} data-testid="modal-overlay">
-      {/* impede que um clique dentro do conteúdo do seu modal se propague para o fundo escuro (o overlay) e feche o modal acidentalmente. */}
+    <ModalOverlay onClick={handleCloseCart} data-testid="modal-overlay">
       <ModalContent onClick={(e) => e.stopPropagation()}>
         <ModalHeader>
           <h2>Seu Carrinho</h2>
-          <CloseButton onClick={closeCart} data-testid="close-button"><FontAwesomeIcon icon={faTimes} /></CloseButton>
+          <CloseButton onClick={handleCloseCart} data-testid="close-button">
+            <FontAwesomeIcon icon={faTimes} />
+          </CloseButton>
         </ModalHeader>
 
         <CartItemsList>
@@ -144,13 +180,20 @@ export function CartModal() {
             <CartItem key={item.id}>
               <ItemImage src={item.image} alt={item.name} />
               <ItemInfo>
-                <h4>{item.name}</h4> 
-                <p>Preço: {item.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</p> 
+                <h4>{item.name}</h4>
+                <p>Preço: {item.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</p>
                 <ItemControls>
-                  <QuantityButton onClick={() => updateQuantity(item.id, item.quantity - 1)} data-testid="minus-button"><FontAwesomeIcon icon={faMinus} /></QuantityButton>
+                  
+                  <QuantityButton onClick={() => handleUpdateQuantity(item.id, item.quantity - 1)} data-testid="minus-button">
+                    <FontAwesomeIcon icon={faMinus} />
+                  </QuantityButton>
                   <QuantityDisplay>{item.quantity}</QuantityDisplay>
-                  <QuantityButton onClick={() => updateQuantity(item.id, item.quantity + 1)} data-testid="plus-button"><FontAwesomeIcon icon={faPlus} /></QuantityButton>
-                  <RemoveButton onClick={() => removeFromCart(item.id)} data-testid="remove-button"><FontAwesomeIcon icon={faTrash} /></RemoveButton>
+                  <QuantityButton onClick={() => handleUpdateQuantity(item.id, item.quantity + 1)} data-testid="plus-button">
+                    <FontAwesomeIcon icon={faPlus} />
+                  </QuantityButton>
+                  <RemoveButton onClick={() => handleRemoveFromCart(item.id)} data-testid="remove-button">
+                    <FontAwesomeIcon icon={faTrash} />
+                  </RemoveButton>
                 </ItemControls>
               </ItemInfo>
             </CartItem>
@@ -160,7 +203,7 @@ export function CartModal() {
         {cartItems.length > 0 && (
           <ModalFooter>
             <Total>Total: {cartTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</Total>
-            <button style={{width: '100%', padding: '1rem', background: '#2ecc71', color: 'white', border: 'none', cursor: 'pointer', fontSize: '1rem' }}>Finalizar Compra</button>
+            <Button>Finalizar Compra</Button>
           </ModalFooter>
         )}
       </ModalContent>
