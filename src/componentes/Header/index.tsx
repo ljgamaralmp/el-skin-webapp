@@ -1,22 +1,19 @@
-import OpcoesHeader from './OpcoesHeader'
-import Topo from './Topo' 
-import styled from 'styled-components'
 
-const HeaderContainer = styled.header`
-    background-color: ${({ theme }) => theme.cores.fundo.branco};
-    display: column;
-    justify-content: center;
-`
+
+import OpcoesHeader from './OpcoesHeader';
+import Topo from './Topo';
+import styles from './Header.module.css'; // 1. Importe o CSS Module
+
+// 2. Remova toda a lógica do styled-components
 
 function Header() {
     return (
-        <header>
-            <HeaderContainer>
-                <Topo/>
-                <OpcoesHeader/>
-            </HeaderContainer>
+        // 3. Aplique a classe do CSS Module ao elemento <header>
+        <header className={styles.headerContainer}>
+            <Topo />
+            <OpcoesHeader />
         </header>
-    )
+    );
 }
 
-export default Header
+export default Header;

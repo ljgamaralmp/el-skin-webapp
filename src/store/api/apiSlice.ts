@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { API_CONFIG } from '../../config/APIConfig'; 
-import { CarouselProps } from '../../service/carouselService'; 
+
+import { CarouselItem } from '../../pages/api/carousel';
 import { Produto } from '../../service/productService'; 
 
 
@@ -9,23 +9,23 @@ export const apiSlice = createApi({
   reducerPath: 'api',
   
   
-  baseQuery: fetchBaseQuery({ baseUrl: API_CONFIG.BASE_URL }), 
+  baseQuery: fetchBaseQuery({ baseUrl: '/api' }), 
 
  
   endpoints: (builder) => ({
- 
-    getCarouselItems: builder.query<CarouselProps[], void>({
-      query: () => API_CONFIG.ENDPOINTS.CAROUSEL,
+
+    getCarouselItems: builder.query<CarouselItem[], void>({
+      query: () => '/carousel',
     }),
 
    
     getProducts: builder.query<Produto[], void>({
-      query: () => API_CONFIG.ENDPOINTS.PRODUCTS,
+      query: () => '/products',
     }),
 
    
     getProductById: builder.query<Produto, string>({
-      query: (id) => `${API_CONFIG.ENDPOINTS.PRODUCTS}/${id}`,
+      query: (id) => `/products/${id}`,
     }),
   }),
 });
